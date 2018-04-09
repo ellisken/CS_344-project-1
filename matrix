@@ -1,0 +1,78 @@
+#!/bin/bash
+    # PROGRAM NAME
+    #   matrix
+    # EXECUTION
+    #   matrix OPERATION [ARGUMENT]...
+    #   Performs the specified operation on 0 or more rectangular 
+    #   matrix arguments and outputs the result to the console.
+    # INPUTS
+    #   matrix dims [MATRIX] - reads the file specified or a matrix provided
+    #       via stdin
+    #   matrix transpose [MATRIX] - reads the file specified or a matrix provided
+    #       via stdin
+    #   matrix mean [MATRIX] - reads the file specified or a matrix provided
+    #       via stdin
+    #   matrix add MATRIX_LEFT MATRIX_RIGHT
+    #   matrix multiply MATRIX_LEFT MATRIX_RIGHT
+    # OUTPUTS
+    #   dims - prints the dimensions of the matrix as "[N rows] [M columns]"
+    #   transpose - reflects the matrix along the main diagonal.
+    #   mean - 1xN row vector, where the first element is the mean of column
+    #           one, the second element is the mean of column two, and so on
+    #   add - the element-wie sum of two MxN matrices 
+    #   multiply - the product of an MxN matrix and NxP matrix
+    # AUTHOR
+    #   Written by Kendra Ellis (ellisken@oregonstate.edu) for 
+    #   CS344 Intro to Operating Systems Project 1 Winter 2018
+
+
+# Global Variables
+
+
+# Function Definitions
+    # NAME
+    #   dims()
+    # DESCRIPTION
+    #   Finds the dimensions of a matrix
+    # INPUTS
+    #   A tempfile to write to
+    # OUTPUTS
+    #   Writes the dimensions to the tempfile
+    # NOTES
+
+    # NAME
+    # DESCRIPTION
+    # INPUTS
+    # OUTPUTS
+    # NOTES
+
+# Handle input - check for operation
+# Validate number of args and file readability
+if [ "$#" -lt 1 ]
+then
+    >&2 echo "Not enough arguments entered. Program terminated with error."
+    exit 3
+fi
+
+# Validate number of args and file readability
+if [ "$1" = "dims" ] || [ "$1" = "transpose" ] || [ "$1" = "mean" ]
+then
+    echo -e "You entered dims, transpose, or mean"
+    # If no file specified, get from stdin
+    if [ $# -lt 2 ]
+    then
+        echo -e "No file specified. Please manually enter a matrix.\n"
+        # Read input and store in tempin
+    fi
+# Then perform the operation and save in tempout
+
+fi                                                                                                  
+# Else if operation is add or multiply
+# validate number of args, file readability, and matrix
+# dimensions using dim
+# If invalid, echo error message to stderr and exit
+# Else, perform selected operation
+
+# Print contents of tempout file to console and quit
+
+
