@@ -36,7 +36,8 @@ matrix_lt=temp_matrix_left$$
 matrix_rt=temp_matrix_rt$$
 err_msg0="Too few arguments. Program exiting."
 err_msg1="OPERATION unknown. Program exiting."
-err_msg2="Operation requires two MATRIX arguments. Program exiting."
+err_msg2="File(s) unreadable or does/do not exist. Program exiting."
+err_msg3="Operation requires two MATRIX arguments. Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
 trap "rm -f $tempinput; rm -f $matrix; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
@@ -81,11 +82,10 @@ error(){
 if [ "$#" -lt 1 ]
 then
     error "$err_msg0"
-elif [ "$1" != "dims" ] || [ "$1" != "transpose" ] || [ "$1" != "mean" ] || [ "$1" != "add" ] || [ "$1" != "mulitply" ]
+elif [ "$1" != "dims" ] && [ "$1" != "transpose" ] && [ "$1" != "mean" ] && [ "$1" != "add" ] && [ "$1" != "mulitply" ]
 then
     error "$err_msg1"
 fi
-
 
 
 # Handle input processing for "dims" "transpose" or "mean"
@@ -95,13 +95,20 @@ then
     if [ "$#" == 1 ]
     then
         cat > $matrix
-    fi
+
     # Else if file specified, save to tempin
-    if [ "$#" == 2 ]
+    elif [ "$#" == 2 ]
     then
-        cat "$2" > $matrix
+        if [ -r "$2" ] && [ -e "$2" ]
+        then
+            cat "$2" > $matrix
+        else
+            error "$err_msg2"
+        fi
     fi
+
 fi
+
 
 # Handle input processing for "add" and "multiply"
 if [ "$1" = "add" ] || [ "$1" = "multiply" ]
@@ -109,7 +116,7 @@ then
     # Verify correct # of arguments
     if [ "$#" -lt 3]
     then
-        error "$err_msg2"
+        error "$err_msg3"
     
     # If # args correct, then store in variables
     # for files
@@ -119,7 +126,7 @@ then
     fi
 fi
 
-# Check if file is readable, else  exit with error
+# Check if file is readable, else exit with error
 # Then perform the operation and save in tempout
 # Else if operation is add or multiply
 # validate number of args, file readability, and matrix
