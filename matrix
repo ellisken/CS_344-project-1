@@ -27,7 +27,8 @@
 
 
 # Global Variables
-
+tempinput=tempin$$
+matrix=matrix$$
 
 # Function Definitions
     # NAME
@@ -46,26 +47,29 @@
     # OUTPUTS
     # NOTES
 
-# Handle input - check for operation
-# Validate number of args and file readability
+# Read input and store in tempin
+while read myinput
+do
+    echo "$myinput" >>tempinput
+done < /dev/stdin
+
+# Validate number of args is at least 1
 if [ "$#" -lt 1 ]
 then
-    >&2 echo "Not enough arguments entered. Program terminated with error."
+    echo "Not enough arguments entered. Program terminated with error." >&2
     exit 3
 fi
 
-# Validate number of args and file readability
+# Check if "dims" "transpose" or "mean"
 if [ "$1" = "dims" ] || [ "$1" = "transpose" ] || [ "$1" = "mean" ]
 then
     echo -e "You entered dims, transpose, or mean"
-    # If no file specified, get from stdin
-    if [ $# -lt 2 ]
-    then
-        echo -e "No file specified. Please manually enter a matrix.\n"
-        # Read input and store in tempin
+    # If no file specified, use input from stdin
+    if [ "$#" -lt 2 ]
+        matrix=tempinput
     fi
+    # Else if file specified, save to tempin
 # Then perform the operation and save in tempout
-
 fi                                                                                                  
 # Else if operation is add or multiply
 # validate number of args, file readability, and matrix
