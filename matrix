@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
     # PROGRAM NAME
     #   matrix
     # EXECUTION
@@ -30,6 +30,8 @@
 tempinput=tempin$$
 matrix=matrix$$
 
+trap "rm -f $tempinput; rm -f $matrix; echo 'Exiting'; exit 1" INT HUP TERM 
+
 # Function Definitions
     # NAME
     #   dims()
@@ -48,10 +50,11 @@ matrix=matrix$$
     # NOTES
 
 # Read input and store in tempin
-while read myinput
-do
-    echo "$myinput" >>tempinput
-done < /dev/stdin
+#while read myinput
+#do
+#    echo "$myinput" >>$tempinput
+#done < /dev/stdin
+cat > $tempinput
 
 # Validate number of args is at least 1
 if [ "$#" -lt 1 ]
@@ -65,9 +68,6 @@ if [ "$1" = "dims" ] || [ "$1" = "transpose" ] || [ "$1" = "mean" ]
 then
     echo -e "You entered dims, transpose, or mean"
     # If no file specified, use input from stdin
-    if [ "$#" -lt 2 ]
-        matrix=tempinput
-    fi
     # Else if file specified, save to tempin
 # Then perform the operation and save in tempout
 fi                                                                                                  
