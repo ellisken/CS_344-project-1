@@ -26,14 +26,26 @@
     #   CS344 Intro to Operating Systems Project 1 Winter 2018
 
 
-# Global Variables
+#-------------------------------------------------------------------
+#
+#                        GLOBAL VARIABLES 
+#
+#-------------------------------------------------------------------
 matrix=temp_matrix$$
-err_msg1="Too few arguments. Program exiting."
+matrix_lt=temp_matrix_left$$
+matrix_rt=temp_matrix_rt$$
+err_msg0="Too few arguments. Program exiting."
+err_msg1="OPERATION unknown. Program exiting."
+err_msg2="Operation requires two MATRIX arguments. Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
 trap "rm -f $tempinput; rm -f $matrix; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
 
-# Function Definitions
+#-------------------------------------------------------------------
+#
+#                       FUNCTION DEFINITIONS
+#
+#-------------------------------------------------------------------
 
 error(){
     # NAME
@@ -58,23 +70,27 @@ error(){
     # OUTPUTS
     # NOTES
 
-# Read input and store in tempin
-#while read myinput
-#do
-#    echo "$myinput" >>$tempinput
-#done < /dev/stdin
 
-# Validate number of args is at least 1 and
-# no greater than 2
+#-------------------------------------------------------------------
+#
+#                         PROGRAM EXECUTION
+#
+#-------------------------------------------------------------------
+
+# Validate OPERATION specified
 if [ "$#" -lt 1 ]
+then
+    error "$err_msg0"
+elif [ "$1" != "dims" ] || [ "$1" != "transpose" ] || [ "$1" != "mean" ] || [ "$1" != "add" ] || [ "$1" != "mulitply" ]
 then
     error "$err_msg1"
 fi
 
-# Check if "dims" "transpose" or "mean"
+
+
+# Handle input processing for "dims" "transpose" or "mean"
 if [ "$1" = "dims" ] || [ "$1" = "transpose" ] || [ "$1" = "mean" ]
 then
-    echo -e "You entered dims, transpose, or mean"
     # If no file specified, use input from stdin
     if [ "$#" == 1 ]
     then
@@ -85,9 +101,26 @@ then
     then
         cat "$2" > $matrix
     fi
+fi
 
+# Handle input processing for "add" and "multiply"
+if [ "$1" = "add" ] || [ "$1" = "multiply" ]
+then
+    # Verify correct # of arguments
+    if [ "$#" -lt 3]
+    then
+        error "$err_msg2"
+    
+    # If # args correct, then store in variables
+    # for files
+    else
+        cat "$2" > $matrix_lt
+        cat "$3" > $matrix_rt
+    fi
+fi
+
+# Check if file is readable, else  exit with error
 # Then perform the operation and save in tempout
-fi                                                                                                  
 # Else if operation is add or multiply
 # validate number of args, file readability, and matrix
 # dimensions using dim
