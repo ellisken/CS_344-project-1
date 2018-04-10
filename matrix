@@ -27,21 +27,30 @@
 
 
 # Global Variables
-tempinput=tempin$$
-matrix=matrix$$
+matrix=temp_matrix$$
+err_msg1="Too few arguments. Program exiting."
 
-trap "rm -f $tempinput; rm -f $matrix; echo 'Exiting'; exit 1" INT HUP TERM 
+# Trap statement to clean up in case of interruption, hang up, or termination
+trap "rm -f $tempinput; rm -f $matrix; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
 
 # Function Definitions
+
+error(){
     # NAME
-    #   dims()
+    #   error()
     # DESCRIPTION
-    #   Finds the dimensions of a matrix
+    #   Sends error message to stdout and exits with non-zero status
     # INPUTS
-    #   A tempfile to write to
+    #   1. A message string 
     # OUTPUTS
-    #   Writes the dimensions to the tempfile
-    # NOTES
+    #   Writes to stderr
+    # AUTHOR
+    #   Kendra Ellis (ellisken@oregonstate.edu)
+
+    echo "$1" >&2
+    exit 1
+}
+
 
     # NAME
     # DESCRIPTION
@@ -54,13 +63,12 @@ trap "rm -f $tempinput; rm -f $matrix; echo 'Exiting'; exit 1" INT HUP TERM
 #do
 #    echo "$myinput" >>$tempinput
 #done < /dev/stdin
-cat > $tempinput
 
-# Validate number of args is at least 1
+# Validate number of args is at least 1 and
+# no greater than 2
 if [ "$#" -lt 1 ]
 then
-    echo "Not enough arguments entered. Program terminated with error." >&2
-    exit 3
+    error "$err_msg1"
 fi
 
 # Check if "dims" "transpose" or "mean"
@@ -68,7 +76,16 @@ if [ "$1" = "dims" ] || [ "$1" = "transpose" ] || [ "$1" = "mean" ]
 then
     echo -e "You entered dims, transpose, or mean"
     # If no file specified, use input from stdin
+    if [ "$#" == 1 ]
+    then
+        cat > $matrix
+    fi
     # Else if file specified, save to tempin
+    if [ "$#" == 2 ]
+    then
+        cat "$2" > $matrix
+    fi
+
 # Then perform the operation and save in tempout
 fi                                                                                                  
 # Else if operation is add or multiply
