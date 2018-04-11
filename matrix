@@ -40,7 +40,7 @@ err_msg2="File(s) unreadable or does/do not exist. Program exiting."
 err_msg3="Operation requires two MATRIX arguments. Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
-trap "rm -f $tempinput; rm -f $matrix; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
+trap "rm -f $matrix; rm -f $matrix_lt; rm -f $matrix_rt; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
 
 #-------------------------------------------------------------------
 #
@@ -82,7 +82,7 @@ error(){
 if [ "$#" -lt 1 ]
 then
     error "$err_msg0"
-elif [ "$1" != "dims" ] && [ "$1" != "transpose" ] && [ "$1" != "mean" ] && [ "$1" != "add" ] && [ "$1" != "mulitply" ]
+elif [ "$1" != "dims" ] && [ "$1" != "transpose" ] && [ "$1" != "mean" ] && [ "$1" != "add" ] && [ "$1" != "multiply" ]
 then
     error "$err_msg1"
 fi
@@ -117,11 +117,14 @@ else
     then
         error "$err_msg3"
     
-    # If # args correct, then store in variables
-    # for files
-    else
+    # If # args correct, and files are readable && exist 
+    # then store in variables for files
+    elif [ -r "$2" ] && [ -e "$2" ] && [ -r "$3" ] && [ -e "$3" ]
+    then
         cat "$2" > $matrix_lt
         cat "$3" > $matrix_rt
+    else
+        error "$err_msg2"
     fi
 fi
 
