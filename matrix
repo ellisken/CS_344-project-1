@@ -34,7 +34,7 @@
 matrix=temp_matrix$$
 matrix_lt=temp_matrix_left$$
 matrix_rt=temp_matrix_rt$$
-err_msg0="Too few arguments. Program exiting."
+err_msg0="Wrong number of arguments. Program exiting."
 err_msg1="OPERATION unknown. Program exiting."
 err_msg2="File(s) unreadable or does/do not exist. Program exiting."
 err_msg3="Operation requires two MATRIX arguments. Program exiting."
@@ -105,16 +105,15 @@ then
         else
             error "$err_msg2"
         fi
+    # Else there are too many arguments
+    else
+        error "$err_msg0"
     fi
 
-fi
-
-
 # Handle input processing for "add" and "multiply"
-if [ "$1" = "add" ] || [ "$1" = "multiply" ]
-then
+else
     # Verify correct # of arguments
-    if [ "$#" -lt 3]
+    if [ "$#" -lt 3 ] || [ "$#" -gt 3 ]
     then
         error "$err_msg3"
     
