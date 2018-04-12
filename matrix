@@ -76,7 +76,19 @@ dims(){
     # OUTPUTS
     #   ROWS COLUMNS > stdout
     # NOTES
-    echo "dims called"
+    
+    # Store line count in one variable
+    lines=$(wc -l "$matrix" | cut -c 1)
+    echo "lines: $lines"
+
+    # Store word count in another variable
+    #wc -w "$matrix" > words
+    #echo "words: $words"
+
+    # Determine # of columns
+    #columns=$((nums / lines))
+    #echo "columns: columns"
+    # Echo results
  
 }
 
@@ -137,7 +149,7 @@ else
 fi
 
 
-# Then perform the operation and save in tempout
+# Then perform the operation
 $1 "${@:2}"
 
 # Print contents of tempout file to console
