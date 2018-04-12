@@ -76,6 +76,7 @@ dims(){
     # OUTPUTS
     #   ROWS COLUMNS > stdout
     # NOTES
+    echo "dims called"
  
 }
 
@@ -135,7 +136,9 @@ else
     fi
 fi
 
+
 # Then perform the operation and save in tempout
+$1 "${@:2}"
 
 # Print contents of tempout file to console
 
