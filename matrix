@@ -77,18 +77,17 @@ dims(){
     #   ROWS COLUMNS > stdout
     # NOTES
     
-    # Store line count in one variable
-    lines=$(wc -l "$matrix" | cut -f 1 -d " ")
+    # Store line (row)  count in one variable
+    rows=$(wc -l "$matrix" | cut -f 1 -d " ")
 
-    # Store word count in another variable
-    words=$(wc -w "$matrix" | cut -f 1 -d " ")
-
-    echo "words: $words"
+    # Store word (total numbers in matrix) count in another variable
+    nums=$(wc -w "$matrix" | cut -f 1 -d " ")
 
     # Determine # of columns
-    #columns=$((nums / lines))
-    #echo "columns: columns"
+    columns=$((nums / rows))
+    
     # Echo results
+    echo "$rows $columns"
  
 }
 
