@@ -23,7 +23,8 @@
     #   multiply - the product of an MxN matrix and NxP matrix
     # AUTHOR
     #   Written by Kendra Ellis (ellisken@oregonstate.edu) for 
-    #   CS344 Intro to Operating Systems Project 1 Winter 2018
+    #   CS344 Intro to Operating Systems Project 1 Winter 2018. All functions
+    #   written by Kendra Ellis unless otherwise noted.
 
 
 #-------------------------------------------------------------------
@@ -58,19 +59,25 @@ error(){
     # OUTPUTS
     #   Writes to stderr
     # AUTHOR
-    #   Kendra Ellis (ellisken@oregonstate.edu)
 
     echo "$1" >&2
     exit 1
 }
 
-
+dims(){
     # NAME
+    #   dims()
     # DESCRIPTION
+    # Else, perform selected operation
+    #   Calculates a matrix's dimensions (ROWS, COLUMNS) and prints
+    #   the results (space separated) to stdout
     # INPUTS
+    #
     # OUTPUTS
+    #   ROWS COLUMNS > stdout
     # NOTES
-
+ 
+}
 
 #-------------------------------------------------------------------
 #
@@ -113,7 +120,7 @@ then
 # Handle input processing for "add" and "multiply"
 else
     # Verify correct # of arguments
-    if [ "$#" -lt 3 ] || [ "$#" -gt 3 ]
+    if [ "$#" != 3 ]
     then
         error "$err_msg3"
     
@@ -128,14 +135,10 @@ else
     fi
 fi
 
-# Check if file is readable, else exit with error
 # Then perform the operation and save in tempout
-# Else if operation is add or multiply
-# validate number of args, file readability, and matrix
-# dimensions using dim
-# If invalid, echo error message to stderr and exit
-# Else, perform selected operation
 
-# Print contents of tempout file to console and quit
+# Print contents of tempout file to console
+
+# Clean up tempfiles
 
 
