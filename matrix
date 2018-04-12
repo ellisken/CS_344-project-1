@@ -78,12 +78,12 @@ dims(){
     # NOTES
     
     # Store line count in one variable
-    lines=$(wc -l "$matrix" | cut -c 1)
-    echo "lines: $lines"
+    lines=$(wc -l "$matrix" | cut -f 1 -d " ")
 
     # Store word count in another variable
-    #wc -w "$matrix" > words
-    #echo "words: $words"
+    words=$(wc -w "$matrix" | cut -f 1 -d " ")
+
+    echo "words: $words"
 
     # Determine # of columns
     #columns=$((nums / lines))
