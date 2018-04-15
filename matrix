@@ -99,11 +99,31 @@ transpose(){
     #   MATRIX file
     # OUTPUTS
     #   Prints the transpose to stdout
+    tempcol=tempcol$$
+    temptrans=temptrans$$
+
+    # Get column count
+    col_ct=$(head -1 $matrix | wc -w)
     
     # For each column in the matrix
+    i=1
+    while [ $i -le $col_ct ]
+    do
         # Save the column in a tempfile
-        # For each line (number) in the tempfile
-        # Append number to temp transpose file in same line
+        cut -f "$i" $matrix > $tempcol
+        # For each line (number) in tempcol
+        # append to temptrans file in same line 
+        # to create row
+        while read num
+        do
+            echo -n "$num " >> $temptrans
+        done < $tempcol
+        echo >> $temptrans
+        rm -f $tempcol
+        i=$(expr $i + 1 )
+    done
+
+    cat $temptrans
         # Echo to move to next line
         # Erase column tempfile
     # Cat temp transpose file to stdout
