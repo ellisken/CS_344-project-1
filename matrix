@@ -68,14 +68,12 @@ dims(){
     # NAME
     #   dims()
     # DESCRIPTION
-    # Else, perform selected operation
     #   Calculates a matrix's dimensions (ROWS, COLUMNS) and prints
     #   the results (space separated) to stdout
     # INPUTS
-    #
+    #   MATRIX file   
     # OUTPUTS
     #   ROWS COLUMNS > stdout
-    # NOTES
     
     # Store line (row)  count in one variable
     rows=$(wc -l "$matrix" | cut -f 1 -d " ")
@@ -90,6 +88,29 @@ dims(){
     echo "$rows $columns"
  
 }
+
+
+transpose(){
+    # NAME
+    #   transpose()
+    # DESCRIPTION
+    #   Translates a matrix around the main diagonal 
+    # INPUTS
+    #   MATRIX file
+    # OUTPUTS
+    #   Prints the transpose to stdout
+    
+    # For each column in the matrix
+        # Save the column in a tempfile
+        # For each line (number) in the tempfile
+        # Append number to temp transpose file in same line
+        # Echo to move to next line
+        # Erase column tempfile
+    # Cat temp transpose file to stdout
+    # Clean up tempfiles
+
+}
+
 
 #-------------------------------------------------------------------
 #
@@ -151,8 +172,21 @@ fi
 # Then perform the operation
 $1 "${@:2}"
 
-# Print contents of tempout file to console
-
 # Clean up tempfiles
+if [ -e $matrix ]
+then
+    rm -f $matrix
+fi
 
+if [ -e $matrix_lt ]
+then
+    rm -f $matrix_lt
+fi
 
+if [ -e $matrix_rt ]
+then
+    rm -f $matrix_rt
+fi
+
+# Return
+exit 0
