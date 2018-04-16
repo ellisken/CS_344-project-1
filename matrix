@@ -126,7 +126,7 @@ transpose(){
 
     # Get rid of trailing '\t' on each line
     # and send to stdout with 'sed'
-    sed -A 's/\t$//' $temptrans
+    sed 's/\t$//' $temptrans
 
     # Display transpose matrix
     #cat $temptrans2
