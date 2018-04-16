@@ -101,6 +101,7 @@ transpose(){
     #   Prints the transpose to stdout
     tempcol=tempcol$$
     temptrans=temptrans$$
+    temptrans2=temptrans2$$
 
     # Get column count
     col_ct=$(head -1 $matrix | wc -w)
@@ -116,21 +117,24 @@ transpose(){
         # to create row
         while read num
         do
-            echo -n "$num " >> $temptrans
+            echo -n -e "$num\t" >> $temptrans
         done < $tempcol
         echo >> $temptrans
         rm -f $tempcol
         i=$(expr $i + 1 )
     done
 
-    cat $temptrans
-        # Echo to move to next line
-        # Erase column tempfile
-    # Cat temp transpose file to stdout
-    # Clean up tempfiles
+    # Get rid of trailing '\t' on each line
+    # and send to stdout with 'sed'
+    sed -A 's/\t$//' $temptrans
 
+    # Display transpose matrix
+    #cat $temptrans2
+
+    # Erase column tempfile
+    rm -f $temptrans
+    #rm -f $temptrans2
 }
-
 
 #-------------------------------------------------------------------
 #
