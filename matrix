@@ -198,7 +198,7 @@ fi
 
 
 # Then perform the operation
-$1 "${@:2}"
+$1
 
 # Clean up tempfiles
 if [ -e $matrix ]
