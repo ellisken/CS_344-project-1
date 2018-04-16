@@ -105,6 +105,8 @@ transpose(){
 
     # Get column count
     col_ct=$(head -1 $matrix | wc -w)
+    # Get row count
+    row_ct=$(wc -l "$matrix" | cut -f 1 -d " ")
     
     # For each column in the matrix
     i=1
@@ -113,27 +115,29 @@ transpose(){
         # Save the column in a tempfile
         cut -f "$i" $matrix > $tempcol
         # For each line (number) in tempcol
-        # append to temptrans file in same line 
-        # to create row
+        # append to temptrans file in same line to create row
+        j=1 # Used to track column number
         while read num
         do
-            echo -n -e "$num\t" >> $temptrans
+            echo -n "$num" >> $temptrans
+            # If not the last number in the column, add tab delimiter
+            if [ $j != $row_ct ]
+            then
+                echo -n -e "\t" >>$temptrans
+            fi
+            j=$(expr $j + 1 ) # Increment j
         done < $tempcol
         echo >> $temptrans
         rm -f $tempcol
         i=$(expr $i + 1 )
+        j=1 # Reset j
     done
-
-    # Get rid of trailing '\t' on each line
-    # and send to stdout with 'sed'
-    sed 's/\t$//' $temptrans
-
+    
     # Display transpose matrix
-    #cat $temptrans2
+    cat $temptrans
 
     # Erase column tempfile
     rm -f $temptrans
-    #rm -f $temptrans2
 }
 
 #-------------------------------------------------------------------
