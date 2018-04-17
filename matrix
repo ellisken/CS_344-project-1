@@ -64,6 +64,7 @@ error(){
     exit 1
 }
 
+
 dims(){
     # NAME
     #   dims()
@@ -98,10 +99,10 @@ transpose(){
     # INPUTS
     #   MATRIX file
     # OUTPUTS
-    #   Prints the transpose to stdout
+    #   Displays the transpose matrix through stdout
+
     tempcol=tempcol$$
     temptrans=temptrans$$
-    temptrans2=temptrans2$$
 
     # Get column count
     col_ct=$(head -1 $matrix | wc -w)
@@ -136,9 +137,75 @@ transpose(){
     # Display transpose matrix
     cat $temptrans
 
-    # Erase column tempfile
+    # Clean up temp files
     rm -f $temptrans
 }
+
+
+mean(){
+    # NAME
+    #   mean()
+    # DESCRIPTION
+    #   Takes an MxN matrix and returns a 1xN row vector that contains
+    #   the mean value of each column.
+    # INPUTS
+    #   
+    # OUTPUTS
+    #   Displays mean row vector through stdout
+    
+    tempcol=tempcol$$
+    tempmean=tempmean$$
+
+    # Get column count
+    col_ct=$(head -1 $matrix | wc -w)
+    i=1  # Set up column indexing variables
+    total=0
+
+    # For each column in the matrix
+    while [ $i -le $col_ct ]
+    do
+        # Save the column in a tempfile
+        cut -f "$i" $matrix > $tempcol
+        # Get row count
+        row_ct=$(cat "$tempcol" | wc -l)
+
+        # For each line (number) in tempcol
+        # Add item value to total
+        while read num
+        do
+            total=$((total + num))
+        done < $tempcol
+
+        # Compute the mean value
+        row_ct_over_2=$((row_ct / 2))
+        mean=$(((total + row_ct_over_2 * ((total>0)*2-1)) / row_ct))
+
+        # Add to tempmean file
+        echo -n "$mean" >> $tempmean
+        # If column tracker != col_ct
+        if [ $i != $col_ct ]
+        then
+            # Add a tab between elements
+            echo -n -e  "\t" >> $tempmean
+        fi
+        # Increment i
+        i=$(expr $i + 1 )
+        # Reset total
+        total=0
+        # Delete tempcol
+        rm -f $tempcol
+    done
+
+    # Add \n to tempmean?
+    echo >> $tempmean
+
+    # Display tempmean
+    cat $tempmean
+
+    # Clean up temp files
+    rm -f $tempmean
+}
+
 
 #-------------------------------------------------------------------
 #
