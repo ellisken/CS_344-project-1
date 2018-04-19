@@ -39,6 +39,8 @@ err_msg0="Wrong number of arguments. Program exiting."
 err_msg1="OPERATION unknown. Program exiting."
 err_msg2="File(s) unreadable or does/do not exist. Program exiting."
 err_msg3="Operation requires two MATRIX arguments. Program exiting."
+err_msg4="Left and Right matrix dimensions unsuitable for chosen operation.
+Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
 trap "rm -f $matrix; rm -f $matrix_lt; rm -f $matrix_rt; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
@@ -60,6 +62,24 @@ error(){
     #   Writes to stderr
 
     echo "$1" >&2
+    
+    # Clean up tempfiles
+    if [ -e $matrix ]
+    then
+        rm -f $matrix
+    fi
+
+    if [ -e $matrix_lt ]
+    then
+        rm -f $matrix_lt
+    fi
+
+    if [ -e $matrix_rt ]
+    then
+        rm -f $matrix_rt
+    fi
+
+    # Exit
     exit 1
 }
 
@@ -219,9 +239,20 @@ add(){
     #   returns an error to stderr.
 
     # Get dimensions of each matrix
+    # (this is stupid and dims() should be rewritten
+    # to take arguments)
+    M1=$(cat $matrix_lt | wc -l)
+    M2=$(cat $matrix_rt | wc -l)
+    elements1=$(cat $matrix_lt | wc -w)
+    elements2=$(cat $matrix_rt | wc -w)
+    N1=$((elements1 / M1))
+    N2=$((elements2 / M2))
+
     # Verify dimensions work for matrix addition
-    # If M1!=M2 || N1!=N2
-        # error message
+    if [ $M1 != $M2 ] || [ $N1 != $N2 ]
+    then
+       error "$err_msg4" 
+    fi
     # Get column and row counts?
     # Else read a line in from each matrix file
         # Save in temprow files
