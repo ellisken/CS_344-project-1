@@ -58,7 +58,6 @@ error(){
     #   1. A message string 
     # OUTPUTS
     #   Writes to stderr
-    # AUTHOR
 
     echo "$1" >&2
     exit 1
@@ -149,7 +148,7 @@ mean(){
     #   Takes an MxN matrix and returns a 1xN row vector that contains
     #   the mean value of each column.
     # INPUTS
-    #   
+    #   MATRIX file
     # OUTPUTS
     #   Displays mean row vector through stdout
     
@@ -204,6 +203,41 @@ mean(){
 
     # Clean up temp files
     rm -f $tempmean
+}
+
+
+add(){
+    # NAME
+    #   add()
+    # DESCRIPTION
+    #   Takes two MxN matrices and adds them together element-wise
+    #   to produce an MxN matrix.
+    # INPUTS
+    #   Matrix_left, Matrix_right
+    # OUTPUTS
+    #   Displays the resulting MxN matrix via stdout, otherwise
+    #   returns an error to stderr.
+
+    # Get dimensions of each matrix
+    # Verify dimensions work for matrix addition
+    # If M1!=M2 || N1!=N2
+        # error message
+    # Get column and row counts?
+    # Else read a line in from each matrix file
+        # Save in temprow files
+        # While j is less thatn column count
+            # Cut the first number in each temprow file and
+            # save in respective variables
+            # Add values together and echo total to tempadd file
+            # if j!=col_ct, insert tab delimiter
+            # Increment j
+        # Delete temprow files
+        # Insert newline
+
+    # Display tempadd file
+    # Clean up
+
+
 }
 
 
