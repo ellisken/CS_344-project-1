@@ -344,7 +344,7 @@ else
     
     # If # args correct, and files are readable && exist 
     # then store in variables for files
-    elif [ -r "$2" ] && [ -e "$2" ] && [ -r "$3" ] && [ -e "$3" ]
+    elif [ -r "$2" ] && [ -e "$2" ] && [ -s "$2" ] && [ -r "$3" ] && [ -e "$3" ] && [ -s "$3" ]
     then
         cat "$2" > $matrix_lt
         cat "$3" > $matrix_rt
