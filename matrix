@@ -26,6 +26,12 @@
     #   CS344 Intro to Operating Systems Project 1 Winter 2018. All functions
     #   written by Kendra Ellis unless otherwise noted.
 
+# NOTE FOR GRADER: 
+#   The transpose involution tests, add tests, and multiply tests are taking an
+#   alarming amount of time to run. I changed the comment style in the multiply
+#   function in an attempt to cut down on the number of lines bash needs to
+#   interpret, but it seems to have had no effect.
+
 
 #-------------------------------------------------------------------
 #
@@ -43,7 +49,7 @@ err_msg4="Left and Right matrix dimensions unsuitable for chosen operation.
 Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
-trap "rm -f $matrix; rm -f *tmp*; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
+trap "rm -f $matrix; rm -f *temp*; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
 
 #-------------------------------------------------------------------
 #
@@ -64,20 +70,8 @@ error(){
     echo "$1" >&2
     
     # Clean up tempfiles
-    if [ -e $matrix ]
-    then
-        rm -f $matrix
-    fi
-
-    if [ -e $matrix_lt ]
-    then
-        rm -f $matrix_lt
-    fi
-
-    if [ -e $matrix_rt ]
-    then
-        rm -f $matrix_rt
-    fi
+    rm -f $matrix
+    rm -f *temp*
 
     # Exit
     exit 1
@@ -129,8 +123,9 @@ transpose(){
     row_ct=$(wc -l $1 | cut -f 1 -d " ")
     
     # For each column in the matrix
-    i=1
-    while [ $i -le $col_ct ]
+    #i=1
+    #while [ $i -le $col_ct ]
+    for i in `seq 1 $col_ct`
     do
         # Save the column in a tempfile
         cut -f $i $1 > $tempcol
@@ -145,11 +140,11 @@ transpose(){
             then
                 echo -n -e "\t" >>$temptrans
             fi
-            j=$(expr $j + 1 ) # Increment j
+            j=$((j + 1 )) # Increment j
         done < $tempcol
         echo >> $temptrans
         rm -f $tempcol
-        i=$(expr $i + 1 )
+        i=$((i + 1 ))
         j=1 # Reset j
     done
     
@@ -177,11 +172,12 @@ mean(){
 
     # Get column count
     col_ct=$(head -1 "$1" | wc -w)
-    i=1  # Set up column indexing variables
+    #i=1  # Set up column indexing variables
     total=0
 
     # For each column in the matrix
-    while [ $i -le $col_ct ]
+    #while [ $i -le $col_ct ]
+    for i in `seq 1 $col_ct`
     do
         # Save the column in a tempfile
         cut -f $i $1 > $tempcol
@@ -208,7 +204,7 @@ mean(){
             echo -n -e  "\t" >> $tempmean
         fi
         # Increment i
-        i=$(expr $i + 1 )
+        i=$(( i + 1 ))
         # Reset total
         total=0
         # Delete tempcol
@@ -254,7 +250,7 @@ add(){
        error "$err_msg4" 
     else 
         # Create column indexing variable
-        j=1
+        #j=1
         # Else read a line in from each matrix file
         while read line_lt && read line_rt <&3
         do
@@ -262,7 +258,8 @@ add(){
             echo "$line_lt" > $temprow_lt
             echo "$line_rt" > $temprow_rt
             # While j is less than column count
-            while [ $j -le $N1 ]
+            #while [ $j -le $N1 ]
+            for j in `seq 1 $N1`
             do
                 # Get the first number in each temprow file
                 num1=$(cut -f $j $temprow_lt)
@@ -276,7 +273,7 @@ add(){
                     echo -n -e "\t" >> $tempsum
                 fi
                 # Increment j
-                j=$(expr $j + 1)
+                j=$(( j + 1))
             done
             # Delete temprow files
             rm -f $temprow_lt
@@ -311,67 +308,50 @@ multiply(){
     tempproduct=tempproduct$$
 
     # Get dimensions N1 and N2
-    # (this is stupid and dims() should be rewritten
-    # to take arguments)
     M=$(cat $1 | wc -l)
     N2=$(cat $2 | wc -l)
     elements1=$(cat $1 | wc -w)
     N1=$((elements1 / M))
     P=$(dims "$2" | cut -f 2 -d " ")
 
-    # Verify dimensions work for matrix multiplication
-    if [ $N1 != $N2 ]
+    if [ $N1 != $N2 ] # Verify dimensions work for matrix multiplication
     then
        error "$err_msg4" 
     else 
-        # Create column indexing
         k=1
-        # Read in row from left matrix
-        while read row_lt
+        while read row_lt # Read in row from left matrix
         do
-            # Save in temprow file
-            echo "$row_lt" > $temprow_lt
+            echo "$row_lt" > $temprow_lt # Save in temprow file
 
-            # While there are columns in the right matrix
-            while [ $k -le $P ]
+            for k in `seq 1 $P` # While there are columns in the right matrix
             do
-                # Save column
-                cut -f $k $2 > $tempcol_rt
+                cut -f $k $2 > $tempcol_rt # Save column
 
-                # Transpose row
-                transpose $temprow_lt > $temprow_ltx
+                transpose $temprow_lt > $temprow_ltx # Transpose row
                 total=0
-                # For each line in temprow_ltx and tempcol_rt
-                while read num1 && read num2 <&3
+                while read num1 && read num2 <&3 # For each line in temprow_ltx and tempcol_rt
                 do
-                    # Multiply nums together
-                    product=$((num1 * num2))
-                    # Add to running total
-                    total=$((total + product))
+                    product=$((num1 * num2)) # Multiply nums together
+                    total=$((total + product)) # Add to running total
                 done < $temprow_ltx 3< $tempcol_rt
                 
-                # Echo to tempproduct same line
-                echo -n "$total" >> $tempproduct
+                echo -n "$total" >> $tempproduct # Echo to tempproduct same line
                 
                 # If j != col_ct, add tab
                 if [ $k != $P ]
                 then
                     echo -n -e "\t" >> $tempproduct
                 fi
-                # Increment k
-                k=$((k + 1))
+                k=$((k + 1)) # Increment k
                 rm -f $tempcol_rt
                 rm -f $temprow_ltx
             done
-            # Insert newline into tempproduct
-            echo >> $tempproduct 
+            echo >> $tempproduct # Insert newline into tempproduct
             k=1
             rm -f $temprow_lt
         done < $1
-        # Display tempsum file
-        cat $tempproduct
-        # Clean up
-        rm -f $tempproduct
+        cat $tempproduct # Display tempsum file
+        rm -f $tempproduct # Clean up
     fi
 }
 
