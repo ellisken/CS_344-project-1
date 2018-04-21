@@ -96,10 +96,10 @@ dims(){
     #   ROWS COLUMNS > stdout
     
     # Store line (row)  count in one variable
-    rows=$(wc -l "$1" | cut -f 1 -d " ")
+    rows=$(wc -l $1 | cut -f 1 -d " ")
 
     # Store word (total numbers in matrix) count in another variable
-    nums=$(wc -w "$1" | cut -f 1 -d " ")
+    nums=$(wc -w $1 | cut -f 1 -d " ")
 
     # Determine # of columns
     columns=$((nums / rows))
@@ -124,16 +124,16 @@ transpose(){
     temptrans=temptrans$$
 
     # Get column count
-    col_ct=$(head -1 "$1" | wc -w)
+    col_ct=$(head -1 $1 | wc -w)
     # Get row count
-    row_ct=$(wc -l "$1" | cut -f 1 -d " ")
+    row_ct=$(wc -l $1 | cut -f 1 -d " ")
     
     # For each column in the matrix
     i=1
     while [ $i -le $col_ct ]
     do
         # Save the column in a tempfile
-        cut -f "$i" $1 > $tempcol
+        cut -f $i $1 > $tempcol
         # For each line (number) in tempcol
         # append to temptrans file in same line to create row
         j=1 # Used to track column number
@@ -184,7 +184,7 @@ mean(){
     while [ $i -le $col_ct ]
     do
         # Save the column in a tempfile
-        cut -f "$i" "$1" > $tempcol
+        cut -f $i $1 > $tempcol
         # Get row count
         row_ct=$(cat "$tempcol" | wc -l)
 
@@ -265,8 +265,8 @@ add(){
             while [ $j -le $N1 ]
             do
                 # Get the first number in each temprow file
-                num1=$(cut -f "$j" $temprow_lt)
-                num2=$(cut -f "$j" $temprow_rt)
+                num1=$(cut -f $j $temprow_lt)
+                num2=$(cut -f $j $temprow_rt)
                 # Add values together and echo total to tempadd file
                 total=$((num1 + num2))
                 echo -n "$total" >> $tempsum
@@ -306,7 +306,7 @@ multiply(){
     #   returns an error to stderr.
 
     temprow_lt=temprowlt$$
-    temprow_rt=tempcolrt$$
+    tempcol_rt=tempcolrt$$
     tempproduct=tempproduct$$
 
     # Get dimensions N1 and N2
@@ -324,7 +324,6 @@ multiply(){
     else 
         # Create column indexing
         j=1
-        echo "Multiplying"
         # Read in row from left matrix
         while read row_lt
         do
@@ -332,12 +331,18 @@ multiply(){
             echo "$row_lt" > $temprow_lt
 
             # While there are columns in the right matrix
+            while [ $j -le $N2 ]
+            do
                 # Save column
+                cut -f $j $2 > $tempcol_rt
+                cat "$tempcol_rt"
                 # Transpose column
                 # Add row_lt and col_rt
                 # Echo to tempproduct same line
                 # If j != col_ct, add tab
                 # Increment j
+                j=$(expr $j + 1)
+            done
             # Insert newline into tempproduct    
         done < $1
         # Display tempsum file
