@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash 
     # PROGRAM NAME
     #   matrix
     # EXECUTION
@@ -289,7 +289,7 @@ add(){
             # Insert newline
             echo >> $tempsum
         done < $matrix_lt 3<$matrix_rt
-        # Display tempadd file
+        # Display tempsum file
         cat $tempsum
         # Clean up
         rm -f $tempsum
@@ -342,7 +342,7 @@ else
     then
         error "$err_msg3"
     
-    # If # args correct, and files are readable && exist 
+    # If # args correct, and files are readable && exist && nonzero 
     # then store in variables for files
     elif [ -r "$2" ] && [ -e "$2" ] && [ -s "$2" ] && [ -r "$3" ] && [ -e "$3" ] && [ -s "$3" ]
     then
@@ -373,5 +373,3 @@ then
     rm -f $matrix_rt
 fi
 
-# Return
-exit 0
