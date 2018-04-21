@@ -33,8 +33,8 @@
 #
 #-------------------------------------------------------------------
 matrix=temp_matrix$$
-matrix_lt=temp_matrix_left$$
-matrix_rt=temp_matrix_rt$$
+#matrix_lt=temp_matrix_left$$
+#matrix_rt=temp_matrix_rt$$
 err_msg0="Wrong number of arguments. Program exiting."
 err_msg1="OPERATION unknown. Program exiting."
 err_msg2="File(s) unreadable or does/do not exist. Program exiting."
@@ -43,7 +43,7 @@ err_msg4="Left and Right matrix dimensions unsuitable for chosen operation.
 Program exiting."
 
 # Trap statement to clean up in case of interruption, hang up, or termination
-trap "rm -f $matrix; rm -f $matrix_lt; rm -f $matrix_rt; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
+trap "rm -f $matrix; rm -f *tmp*; echo 'Ctrl-C entered. Exiting'; exit 1" INT HUP TERM 
 
 #-------------------------------------------------------------------
 #
@@ -96,10 +96,10 @@ dims(){
     #   ROWS COLUMNS > stdout
     
     # Store line (row)  count in one variable
-    rows=$(wc -l "$matrix" | cut -f 1 -d " ")
+    rows=$(wc -l "$1" | cut -f 1 -d " ")
 
     # Store word (total numbers in matrix) count in another variable
-    nums=$(wc -w "$matrix" | cut -f 1 -d " ")
+    nums=$(wc -w "$1" | cut -f 1 -d " ")
 
     # Determine # of columns
     columns=$((nums / rows))
@@ -245,10 +245,10 @@ add(){
     # Get dimensions of each matrix
     # (this is stupid and dims() should be rewritten
     # to take arguments)
-    M1=$(cat $matrix_lt | wc -l)
-    M2=$(cat $matrix_rt | wc -l)
-    elements1=$(cat $matrix_lt | wc -w)
-    elements2=$(cat $matrix_rt | wc -w)
+    M1=$(cat $1 | wc -l)
+    M2=$(cat $2 | wc -l)
+    elements1=$(cat $1 | wc -w)
+    elements2=$(cat $2 | wc -w)
     N1=$((elements1 / M1))
     N2=$((elements2 / M2))
 
@@ -316,9 +316,9 @@ multiply(){
     # Get dimensions N1 and N2
     # (this is stupid and dims() should be rewritten
     # to take arguments)
-    M=$(cat $matrix_lt | wc -l)
-    N2=$(cat $matrix_rt | wc -l)
-    elements1=$(cat $matrix_lt | wc -w)
+    M=$(cat $2 | wc -l)
+    N2=$(cat $3 | wc -l)
+    elements1=$(cat $2 | wc -w)
     N1=$((elements1 / M))
 
     # Verify dimensions work for matrix multiplication
@@ -328,12 +328,11 @@ multiply(){
     else 
         # Create column indexing variable
         j=1
-        # Else read a line in from each matrix file
-        while read line_lt && read line_rt <&3
+        # Read in row from left matrix
+        while read row_lt
         do
-            # Save in temprow files
-            echo "$line_lt" > $temprow_lt
-            echo "$line_rt" > $temprow_rt
+            # Save in temprow file
+            echo "$row_lt" > $temprow_lt
             # While j is less than column count
             while [ $j -le $N1 ]
             do
@@ -357,11 +356,11 @@ multiply(){
             j=1 # Reset j
             # Insert newline
             echo >> $tempsum
-        done < $matrix_lt 3<$matrix_rt
+        done < $matrix_lt
         # Display tempsum file
-        cat $tempsum
+        cat $tempproduct
         # Clean up
-        rm -f $tempsum
+        rm -f $tempproduct
     fi
 }
 
@@ -388,7 +387,7 @@ then
     if [ "$#" == 1 ]
     then
         cat > $matrix
-
+        $1 #Call function
     # Else if file specified, save to tempin
     elif [ "$#" == 2 ]
     then
@@ -398,6 +397,9 @@ then
         else
             error "$err_msg2"
         fi
+    # Call function
+    $1 "${@:2}"
+
     # Else there are too many arguments
     else
         error "$err_msg0"
@@ -414,8 +416,9 @@ else
     # then store in variables for files
     elif [ -r "$2" ] && [ -e "$2" ] && [ -s "$2" ] && [ -r "$3" ] && [ -e "$3" ] && [ -s "$3" ]
     then
-        cat "$2" > $matrix_lt
-        cat "$3" > $matrix_rt
+        #cat "$2"
+        #cat "$3"
+        $1 "${@:2}"
     else
         error "$err_msg2"
     fi
@@ -423,7 +426,7 @@ fi
 
 
 # Then perform the operation
-$1
+#$1 "${@:2}"
 
 # Clean up tempfiles
 if [ -e $matrix ]
