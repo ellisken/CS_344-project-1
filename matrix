@@ -124,16 +124,16 @@ transpose(){
     temptrans=temptrans$$
 
     # Get column count
-    col_ct=$(head -1 $matrix | wc -w)
+    col_ct=$(head -1 "$1" | wc -w)
     # Get row count
-    row_ct=$(wc -l "$matrix" | cut -f 1 -d " ")
+    row_ct=$(wc -l "$1" | cut -f 1 -d " ")
     
     # For each column in the matrix
     i=1
     while [ $i -le $col_ct ]
     do
         # Save the column in a tempfile
-        cut -f "$i" $matrix > $tempcol
+        cut -f "$i" $1 > $tempcol
         # For each line (number) in tempcol
         # append to temptrans file in same line to create row
         j=1 # Used to track column number
@@ -176,7 +176,7 @@ mean(){
     tempmean=tempmean$$
 
     # Get column count
-    col_ct=$(head -1 $matrix | wc -w)
+    col_ct=$(head -1 "$1" | wc -w)
     i=1  # Set up column indexing variables
     total=0
 
@@ -184,7 +184,7 @@ mean(){
     while [ $i -le $col_ct ]
     do
         # Save the column in a tempfile
-        cut -f "$i" $matrix > $tempcol
+        cut -f "$i" "$1" > $tempcol
         # Get row count
         row_ct=$(cat "$tempcol" | wc -l)
 
@@ -243,14 +243,10 @@ add(){
     tempsum=tempsum$$
 
     # Get dimensions of each matrix
-    # (this is stupid and dims() should be rewritten
-    # to take arguments)
-    M1=$(cat $1 | wc -l)
-    M2=$(cat $2 | wc -l)
-    elements1=$(cat $1 | wc -w)
-    elements2=$(cat $2 | wc -w)
-    N1=$((elements1 / M1))
-    N2=$((elements2 / M2))
+    M1=$(dims "$1" | cut -f 1 -d " ")
+    N1=$(dims "$1" | cut -f 2 -d " ")
+    M2=$(dims "$2" | cut -f 1 -d " ")
+    N2=$(dims "$2" | cut -f 2 -d " ")
 
     # Verify dimensions work for matrix addition
     if [ $M1 != $M2 ] || [ $N1 != $N2 ]
@@ -288,7 +284,7 @@ add(){
             j=1 # Reset j
             # Insert newline
             echo >> $tempsum
-        done < $matrix_lt 3<$matrix_rt
+        done < $1 3<$2
         # Display tempsum file
         cat $tempsum
         # Clean up
@@ -387,18 +383,17 @@ then
     if [ "$#" == 1 ]
     then
         cat > $matrix
-        $1 #Call function
+        $1 "$matrix" #Call function
     # Else if file specified, save to tempin
     elif [ "$#" == 2 ]
     then
         if [ -r "$2" ] && [ -e "$2" ]
         then
-            cat "$2" > $matrix
+            # Call function
+            $1 "${@:2}"
         else
             error "$err_msg2"
         fi
-    # Call function
-    $1 "${@:2}"
 
     # Else there are too many arguments
     else
@@ -416,31 +411,15 @@ else
     # then store in variables for files
     elif [ -r "$2" ] && [ -e "$2" ] && [ -s "$2" ] && [ -r "$3" ] && [ -e "$3" ] && [ -s "$3" ]
     then
-        #cat "$2"
-        #cat "$3"
         $1 "${@:2}"
     else
         error "$err_msg2"
     fi
 fi
 
-
-# Then perform the operation
-#$1 "${@:2}"
-
-# Clean up tempfiles
+# Clean up
 if [ -e $matrix ]
 then
     rm -f $matrix
-fi
-
-if [ -e $matrix_lt ]
-then
-    rm -f $matrix_lt
-fi
-
-if [ -e $matrix_rt ]
-then
-    rm -f $matrix_rt
 fi
 
