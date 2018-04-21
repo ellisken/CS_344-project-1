@@ -297,6 +297,74 @@ add(){
 }
 
 
+multiply(){
+    # NAME
+    #   multiply()
+    # DESCRIPTION
+    #   Takes an MxN and NxP matrix and produces an MxP
+    #   matrix
+    # INPUTS
+    #   Matrix_left, Matrix_right
+    # OUTPUTS
+    #   Displays the resulting MxP matrix via stdout, otherwise
+    #   returns an error to stderr.
+
+    temprow_lt=temprowlt$$
+    temprow_rt=temprowrt$$
+    tempproduct=tempproduct$$
+
+    # Get dimensions N1 and N2
+    # (this is stupid and dims() should be rewritten
+    # to take arguments)
+    M=$(cat $matrix_lt | wc -l)
+    N2=$(cat $matrix_rt | wc -l)
+    elements1=$(cat $matrix_lt | wc -w)
+    N1=$((elements1 / M))
+
+    # Verify dimensions work for matrix multiplication
+    if [ $N1 != $N2 ]
+    then
+       error "$err_msg4" 
+    else 
+        # Create column indexing variable
+        j=1
+        # Else read a line in from each matrix file
+        while read line_lt && read line_rt <&3
+        do
+            # Save in temprow files
+            echo "$line_lt" > $temprow_lt
+            echo "$line_rt" > $temprow_rt
+            # While j is less than column count
+            while [ $j -le $N1 ]
+            do
+                # Get the first number in each temprow file
+                num1=$(cut -f "$j" $temprow_lt)
+                num2=$(cut -f "$j" $temprow_rt)
+                # Add values together and echo total to tempadd file
+                total=$((num1 + num2))
+                echo -n "$total" >> $tempsum
+                # if j!=col_ct, insert tab delimiter
+                if [ $j != $N1 ]
+                then
+                    echo -n -e "\t" >> $tempsum
+                fi
+                # Increment j
+                j=$(expr $j + 1)
+            done
+            # Delete temprow files
+            rm -f $temprow_lt
+            rm -f $temprow_rt
+            j=1 # Reset j
+            # Insert newline
+            echo >> $tempsum
+        done < $matrix_lt 3<$matrix_rt
+        # Display tempsum file
+        cat $tempsum
+        # Clean up
+        rm -f $tempsum
+    fi
+}
+
 #-------------------------------------------------------------------
 #
 #                         PROGRAM EXECUTION
