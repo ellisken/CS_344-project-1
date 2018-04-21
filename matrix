@@ -284,7 +284,7 @@ add(){
             j=1 # Reset j
             # Insert newline
             echo >> $tempsum
-        done < $1 3<$2
+        done < $1 3< $2
         # Display tempsum file
         cat $tempsum
         # Clean up
@@ -306,7 +306,7 @@ multiply(){
     #   returns an error to stderr.
 
     temprow_lt=temprowlt$$
-    temprow_rt=temprowrt$$
+    temprow_rt=tempcolrt$$
     tempproduct=tempproduct$$
 
     # Get dimensions N1 and N2
@@ -322,15 +322,24 @@ multiply(){
     then
        error "$err_msg4" 
     else 
-        # Create column indexing variable
+        # Create column indexing
         j=1
         echo "Multiplying"
         # Read in row from left matrix
-        #while read row_lt
-        #do
+        while read row_lt
+        do
             # Save in temprow file
-            #echo "$row_lt" > $temprow_lt
-        #done < $matrix_lt
+            echo "$row_lt" > $temprow_lt
+
+            # While there are columns in the right matrix
+                # Save column
+                # Transpose column
+                # Add row_lt and col_rt
+                # Echo to tempproduct same line
+                # If j != col_ct, add tab
+                # Increment j
+            # Insert newline into tempproduct    
+        done < $1
         # Display tempsum file
         #cat $tempproduct
         # Clean up
