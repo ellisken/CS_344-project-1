@@ -312,9 +312,9 @@ multiply(){
     # Get dimensions N1 and N2
     # (this is stupid and dims() should be rewritten
     # to take arguments)
-    M=$(cat $2 | wc -l)
-    N2=$(cat $3 | wc -l)
-    elements1=$(cat $2 | wc -w)
+    M=$(cat $1 | wc -l)
+    N2=$(cat $2 | wc -l)
+    elements1=$(cat $1 | wc -w)
     N1=$((elements1 / M))
 
     # Verify dimensions work for matrix multiplication
@@ -324,39 +324,17 @@ multiply(){
     else 
         # Create column indexing variable
         j=1
+        echo "Multiplying"
         # Read in row from left matrix
-        while read row_lt
-        do
+        #while read row_lt
+        #do
             # Save in temprow file
-            echo "$row_lt" > $temprow_lt
-            # While j is less than column count
-            while [ $j -le $N1 ]
-            do
-                # Get the first number in each temprow file
-                num1=$(cut -f "$j" $temprow_lt)
-                num2=$(cut -f "$j" $temprow_rt)
-                # Add values together and echo total to tempadd file
-                total=$((num1 + num2))
-                echo -n "$total" >> $tempsum
-                # if j!=col_ct, insert tab delimiter
-                if [ $j != $N1 ]
-                then
-                    echo -n -e "\t" >> $tempsum
-                fi
-                # Increment j
-                j=$(expr $j + 1)
-            done
-            # Delete temprow files
-            rm -f $temprow_lt
-            rm -f $temprow_rt
-            j=1 # Reset j
-            # Insert newline
-            echo >> $tempsum
-        done < $matrix_lt
+            #echo "$row_lt" > $temprow_lt
+        #done < $matrix_lt
         # Display tempsum file
-        cat $tempproduct
+        #cat $tempproduct
         # Clean up
-        rm -f $tempproduct
+        #rm -f $tempproduct
     fi
 }
 
