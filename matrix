@@ -1,4 +1,11 @@
 #!/bin/bash 
+    # NOTE FOR GRADER: 
+    #   The transpose involution tests, add tests, and multiply tests are taking an
+    #   alarming amount of time to run. I changed the comment style in the multiply
+    #   function in a futile attempt to cut down on the number of lines bash needs to
+    #   interpret.
+    #   AVG RUNTIME is around 9 minutes.
+    #
     # PROGRAM NAME
     #   matrix
     # EXECUTION
@@ -26,11 +33,6 @@
     #   CS344 Intro to Operating Systems Project 1 Winter 2018. All functions
     #   written by Kendra Ellis unless otherwise noted.
 
-# NOTE FOR GRADER: 
-#   The transpose involution tests, add tests, and multiply tests are taking an
-#   alarming amount of time to run. I changed the comment style in the multiply
-#   function in an attempt to cut down on the number of lines bash needs to
-#   interpret, but it seems to have had no effect.
 
 
 #-------------------------------------------------------------------
@@ -123,7 +125,6 @@ transpose(){
     row_ct=$(wc -l $1 | cut -f 1 -d " ")
     
     # For each column in the matrix
-    #i=1
     #while [ $i -le $col_ct ]
     for i in `seq 1 $col_ct`
     do
@@ -131,7 +132,7 @@ transpose(){
         cut -f $i $1 > $tempcol
         # For each line (number) in tempcol
         # append to temptrans file in same line to create row
-        j=1 # Used to track column number
+        j=1
         while read num
         do
             echo -n "$num" >> $temptrans
@@ -140,12 +141,10 @@ transpose(){
             then
                 echo -n -e "\t" >>$temptrans
             fi
-            j=$((j + 1 )) # Increment j
+            j=$((j+1)) # Increment j
         done < $tempcol
         echo >> $temptrans
         rm -f $tempcol
-        i=$((i + 1 ))
-        j=1 # Reset j
     done
     
     # Display transpose matrix
